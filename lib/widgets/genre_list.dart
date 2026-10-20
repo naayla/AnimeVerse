@@ -2,19 +2,9 @@ import 'package:flutter/material.dart';
 
 class GenreList extends StatelessWidget {
   final List<String> genres = const [
-    "All",
-    "Action",
-    "Adventure",
-    "Comedy",
-    "Drama",
-    "Fantasy",
-    "Horror",
-    "Mystery",
-    "Romance",
-    "Sci-Fi",
-    "Slice of Life",
+    "All", "Action", "Adventure", "Comedy", "Drama", "Fantasy",
+    "Horror", "Mystery", "Romance", "Sci-Fi", "Slice of Life",
   ];
-
   final String selected;
   final ValueChanged<String>? onGenreSelected;
 
@@ -28,7 +18,6 @@ class GenreList extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(
@@ -38,13 +27,12 @@ class GenreList extends StatelessWidget {
       child: Row(
         children: genres.map((genre) {
           final isActive = genre == selected;
-
           return Padding(
             padding: EdgeInsets.only(right: screenWidth * 0.06),
             child: InkWell(
               borderRadius: BorderRadius.circular(screenWidth * 0.06),
               onTap: () {
-                // TODO: Update the selected genre and filter the anime list accordingly
+                onGenreSelected?.call(genre);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -52,8 +40,11 @@ class GenreList extends StatelessWidget {
                   vertical: screenHeight * 0.01,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(screenWidth * 0.06),
-                  color: const Color(0xFF0b395e),
+                  borderRadius: BorderRadius.circular(screenWidth *
+                      0.06),
+                  border: Border.all(
+                    color: isActive ? const Color(0xFF1976D2) : const Color(0xFF0b395e),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.3),
@@ -66,7 +57,8 @@ class GenreList extends StatelessWidget {
                   genre,
                   style: TextStyle(
                     fontSize: screenWidth * 0.04,
-                    color: isActive ? Colors.white : Colors.grey.shade600,
+                    color: isActive ? Colors.white :
+                    Colors.grey.shade600,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -74,7 +66,6 @@ class GenreList extends StatelessWidget {
             ),
           );
         }).toList(),
-
       ),
     );
   }

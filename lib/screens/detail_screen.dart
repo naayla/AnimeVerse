@@ -1,38 +1,42 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../data/dummy_data.dart';
+import '../models/anime.dart';
+import '../provider/app_state_provider.dart';
 import '../widgets/app_scaffold.dart';
 
 class DetailScreen extends StatelessWidget {
-  final String animeId;
-  final String title;
-  final String imagePath;
-  final String genre;
-  final String rating;
-  final String totalEpisodes;
-  final String description;
+  final String id;
 
   const DetailScreen({
     super.key,
-    // Menggunakan data dummy untuk sementara sebagai demo
-    this.animeId = '1',
-    this.title = 'Black Clover',
-    this.imagePath = 'assets/images/black_clover.jpg',
-    this.genre = 'Action, Adventure, Fantasy',
-    this.rating = '8.14',
-    this.totalEpisodes = '170',
-    this.description = "Asta and Yuno were abandoned at the same church on the same day. Raised together as children, they came to know of the 'Wizard King'—a title given to the strongest mage in the kingdom—and promised that they would compete against each other for the position of the next Wizard King. However, as they grew up, the stark difference between them became evident. While Yuno is able to wield magic with amazing power and control, Asta cannot use magic at all and desperately tries to awaken his powers by training physically. When they reach the age of 15, Yuno is bestowed a spectacular Grimoire with a four-leaf clover, while Asta receives nothing. However, soon after, Yuno is attacked by a person named Lebuty, whose main purpose is to obtain Yuno's Grimoire. Asta tries to fight Lebuty, but he is outmatched. Though without hope and on the brink of defeat, he finds the strength to continue when he hears Yuno's voice. Unleashing his inner emotions in a rage, Asta receives a five-leaf clover Grimoire, a 'Black Clover' giving him enough power to defeat Lebuty. A few days later, the two friends head out into the world, both seeking the same goal—to become the Wizard King! [Written by MAL Rewrite]", required String id,
+    required this.id,
   });
 
-  @override
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    final Anime? anime = DummyData.animeList.cast<Anime?>().firstWhere(
+          (anime) => anime?.id == id,
+      orElse: () => null,
+    );
+
+    if (anime == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Anime Not Found'),
+        ),
+        body: const Center(
+          child: Text('Anime tidak ditemukan.'),
+        ),
+      );
+    }
+
     return AppScaffold(
       body: CustomScrollView(
         slivers: [
-          // Header section with image and title
           SliverAppBar(
             floating: true,
             pinned: true,
@@ -59,17 +63,12 @@ class DetailScreen extends StatelessWidget {
                 },
               ),
             ),
-
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
                   // Background image
-                  Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                  ),
-                  // Gradient overlay for better text visibility
+                  Image.asset(anime.imagePath, fit: BoxFit.cover),
                   // Gradient overlay for better text visibility
                   Container(
                     decoration: BoxDecoration(
@@ -85,8 +84,6 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Title at the bottom of the image
                   // Title at the bottom of the image
                   Positioned(
                     bottom: screenHeight * 0.02,
@@ -96,7 +93,7 @@ class DetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title,
+                          anime.title,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenWidth * 0.07,
@@ -112,7 +109,7 @@ class DetailScreen extends StatelessWidget {
                         ),
                         SizedBox(height: screenHeight * 0.005),
                         Text(
-                          genre,
+                          anime.genre,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
                             fontSize: screenWidth * 0.04,
@@ -129,13 +126,10 @@ class DetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
-
           ),
-          // Content section
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(screenWidth * 0.04),
@@ -146,10 +140,9 @@ class DetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       // Rating
-                      // Rating
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.03,
+                          horizontal: screenWidth * 0.025,
                           vertical: screenHeight * 0.01,
                         ),
                         decoration: BoxDecoration(
@@ -166,14 +159,10 @@ class DetailScreen extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.white,
-                              size: screenWidth * 0.04,
-                            ),
+                            Icon(Icons.star, color: Colors.white, size: screenWidth * 0.04),
                             SizedBox(width: screenWidth * 0.01),
                             Text(
-                              rating,
+                              anime.rating,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: screenWidth * 0.035,
@@ -183,12 +172,11 @@ class DetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                      SizedBox(width: screenWidth * 0.05),
+                      SizedBox(width: screenWidth * 0.02),
                       // Total Episodes
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.03,
+                          horizontal: screenWidth * 0.025,
                           vertical: screenHeight * 0.01,
                         ),
                         decoration: BoxDecoration(
@@ -203,7 +191,7 @@ class DetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(screenWidth * 0.02),
                         ),
                         child: Text(
-                          '$totalEpisodes Episodes',
+                          '${anime.totalEpisodes} Eps',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenWidth * 0.035,
@@ -211,51 +199,71 @@ class DetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(width: screenWidth * 0.02),
 
-                      SizedBox(width: screenWidth * 0.05),
-                      // Add to Favorites
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.03,
-                          vertical: screenHeight * 0.01,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: screenWidth * 0.02,
-                              offset: Offset(0, screenHeight * 0.005),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.favorite_border,
-                              color: Colors.white,
-                              size: screenWidth * 0.04,
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                            Text(
-                              'Add to Favorites',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.035,
-                                fontWeight: FontWeight.w700,
+                      // Add to Favorites Button (Menggunakan Expanded agar fleksibel)
+                      Expanded(
+                        child: Consumer<AppStateProvider>(
+                          builder: (context, favoriteProvider, child) {
+                            final isFavorite = favoriteProvider.isFavorite(anime.id);
+
+                            return GestureDetector(
+                              onTap: () {
+                                favoriteProvider.toggleFavorite(anime);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.02,
+                                  vertical: screenHeight * 0.01,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.3),
+                                      blurRadius: screenWidth * 0.02,
+                                      offset: Offset(
+                                        0,
+                                        screenHeight * 0.005,
+                                      ),
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(
+                                    screenWidth * 0.02,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                                      color: Colors.white,
+                                      size: screenWidth * 0.04,
+                                    ),
+                                    SizedBox(width: screenWidth * 0.01),
+                                    Flexible(
+                                      child: Text(
+                                        isFavorite ? 'Added to Favorites' : 'Add to Favorites',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: screenWidth * 0.032,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
-
                     ],
                   ),
-
-                  SizedBox(height: screenHeight * 0.03),
-
+                  SizedBox(height: screenHeight * 0.02),
                   // Description
                   Text(
                     'Synopsis',
@@ -265,11 +273,9 @@ class DetailScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   SizedBox(height: screenHeight * 0.015),
-
                   Text(
-                    description,
+                    anime.description,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.9),
                       fontSize: screenWidth * 0.038,
@@ -277,31 +283,13 @@ class DetailScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.justify,
                   ),
-
-                  SizedBox(height: screenHeight * 0.03),
-
-
-                  SizedBox(height: screenHeight * 0.015),
-
-                  Text(
-                    description,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: screenWidth * 0.038,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.justify,
-                  ),
-
                   SizedBox(height: screenHeight * 0.03),
                 ],
               ),
             ),
           ),
-
         ],
       ),
     );
   }
-
 }

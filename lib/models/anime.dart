@@ -6,7 +6,6 @@ class Anime {
   final String rating;
   final String totalEpisodes;
   final String description;
-
   const Anime({
     required this.id,
     required this.title,
@@ -16,4 +15,30 @@ class Anime {
     required this.totalEpisodes,
     required this.description,
   });
+
+  //mengubah objek ke bentuk Map (untuk di encode ke JSON)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'genre': genre,
+      'rating': rating,
+      'imagePath': imagePath,
+      'totalEpisodes': totalEpisodes,
+      'description': description,
+    };
+  }
+
+  //mengubah Map ke bentuk objek (untuk di decode dari JSON)
+  factory Anime.fromJson(Map<String, dynamic> json) {
+    return Anime(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      genre: json['genre'] as String,
+      rating: json['rating'] as String,
+      imagePath: json['imagePath'] as String,
+      totalEpisodes: json['totalEpisodes'] as String,
+      description: json['description'] as String,
+    );
+  }
 }

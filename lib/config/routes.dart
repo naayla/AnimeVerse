@@ -1,26 +1,25 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import '../screens/detail_screen.dart';
+import '../screens/favorite_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/profile_screen.dart';
 import '../screens/signin_screen.dart';
 import '../screens/signup_screen.dart';
-import '../screens/home_screen.dart';
-import '../screens/favorite_screen.dart';
-import '../screens/profile_screen.dart';
-import '../screens/detail_screen.dart';
-import 'package:anime_verse/widgets/bottom_navigation_shell.dart';
+import '../widgets/bottom_navigation_shell.dart';
 
 class AppRoutes {
   static const String signIn = '/sign-in';
   static const String signUp = '/sign-up';
   static const String home = '/home';
+  static const String details = '/details';
   static const String favorites = '/favorites';
   static const String profile = '/profile';
-  static const String details = '/details';
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createRouter(){
-  GlobalKey<NavigatorState>? rootNavigatorKey;
+GoRouter createRouter() {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.signIn,
@@ -31,16 +30,14 @@ GoRouter createRouter(){
         builder: (context, state) => const SignInScreen(),
       ),
 
-
       GoRoute(
         path: AppRoutes.signUp,
         name: 'sign-up',
         builder: (context, state) => const SignUpScreen(),
       ),
 
-
       GoRoute(
-        path: '$AppRoutes.details/:id',
+        path: '${AppRoutes.details}/:id',
         name: 'details',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -48,11 +45,9 @@ GoRouter createRouter(){
         },
       ),
 
-
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return BottomNavigationShell
-            (navigationShell: navigationShell);
+        builder: (context, state, navigationShell){
+          return BottomNavigationShell(navigationShell: navigationShell);
         },
         branches: [
           StatefulShellBranch(
